@@ -15,6 +15,7 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
     @IBOutlet weak var networkErrorView: UIView!
     @IBOutlet weak var tableView: UITableView!
     let apiKey = "a07e22bc18f5cb106bfe4cc1f83ad8ed"
+    var endPoint: String!
     var movies: [NSDictionary]?
     
     override func viewDidLoad() {
@@ -27,7 +28,7 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         ALLoadingView.manager.messageText = "Fetching movies..."
         ALLoadingView.manager.showLoadingView(ofType: .messageWithIndicator, windowMode: .fullscreen)
         
-        let nowPlayingUrl = URL(string: "https://api.themoviedb.org/3/movie/now_playing?api_key=\(apiKey)")
+        let nowPlayingUrl = URL(string: "https://api.themoviedb.org/3/movie/\(endPoint!)?api_key=\(apiKey)")
         let request = URLRequest(url: nowPlayingUrl!)
         let session = URLSession.shared
         let task = session.dataTask(with: request) {
@@ -57,7 +58,7 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
     }
     
     func refreshControlAction(_ refreshControl: UIRefreshControl) {
-        let nowPlayingUrl = URL(string: "https://api.themoviedb.org/3/movie/now_playing?api_key=\(apiKey)")
+        let nowPlayingUrl = URL(string: "https://api.themoviedb.org/3/movie/\(endPoint!)?api_key=\(apiKey)")
         let request = URLRequest(url: nowPlayingUrl!)
         let session = URLSession.shared
         let task = session.dataTask(with: request) {
