@@ -12,6 +12,7 @@ import CircularSpinner
 
 class MoviesViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, CircularSpinnerDelegate, UISearchBarDelegate {
     
+    @IBOutlet weak var listGridSegmentControl: UISegmentedControl!
     @IBOutlet weak var moviesNavigationItem: UINavigationItem!
     @IBOutlet weak var networkErrorView: UIView!
     @IBOutlet weak var tableView: UITableView!
@@ -29,6 +30,7 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         tableView.delegate = self
         let searchBarButton = UIBarButtonItem(image: UIImage(named: "search"), style: .plain, target: self, action: #selector(setUpSearch))
         moviesNavigationItem.rightBarButtonItem = searchBarButton
+        listGridSegmentControl.addTarget(self, action: #selector(changeViewMode), for: .valueChanged)
         
         CircularSpinner.setAnimationDelegate(self)
         CircularSpinner.show("Fetching movies...", animated: true, type: .indeterminate)
@@ -46,6 +48,11 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
             let navMaxY = navigationController!.navigationBar.frame.maxY
             let searchBarRect = CGRect(x: 0, y: navMaxY, width: UIScreen.main.bounds.width, height: 50)
             searchBar = UISearchBar(frame: searchBarRect)
+            searchBar.layer.opacity = 0.92
+            searchBar.backgroundColor = UIColor(red:1.00, green:0.93, blue:1.00, alpha:1.0)
+            let searchTextField = searchBar.value(forKey: "searchField") as? UITextField
+            searchTextField?.textColor = UIColor(red:0.17, green:0.06, blue:0.68, alpha:1.0)
+            searchBar.searchBarStyle = .minimal
             searchBar.delegate = self
             isSearch = true
             view.addSubview(searchBar)
@@ -59,6 +66,10 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
     
     func refreshControlAction(_ refreshControl: UIRefreshControl) {
         loadMovies(refreshControl)
+    }
+    
+    func changeViewMode() {
+        
     }
 
     override func didReceiveMemoryWarning() {

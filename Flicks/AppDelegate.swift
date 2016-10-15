@@ -17,7 +17,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         
+        UINavigationBar.appearance().titleTextAttributes = [NSForegroundColorAttributeName : UIColor(red:0.38, green:0.00, blue:0.40, alpha:1.0), NSFontAttributeName: UIFont(name: "Noteworthy-Bold", size: 25)!]
         window = UIWindow(frame: UIScreen.main.bounds)
+        window?.tintColor = UIColor(red:0.27, green:0.16, blue:0.68, alpha:1.0)
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let nowPlayingNavigationController = storyboard.instantiateViewController(withIdentifier: "MoviesNavigationController") as! UINavigationController
         let nowPlayingViewController = nowPlayingNavigationController.topViewController as! MoviesViewController

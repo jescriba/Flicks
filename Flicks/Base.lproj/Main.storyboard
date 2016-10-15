@@ -86,6 +86,7 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="listGridSegmentControl" destination="Lur-QX-9D1" id="yfg-MM-48g"/>
                         <outlet property="moviesNavigationItem" destination="V3c-as-Nsd" id="iOD-L5-C9u"/>
                         <outlet property="networkErrorView" destination="REz-ow-u1D" id="IiQ-AH-hzY"/>
                         <outlet property="tableView" destination="dfb-ed-ghO" id="OL8-PP-eUS"/>
