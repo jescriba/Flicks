@@ -25,6 +25,8 @@ class DetailViewController: UIViewController {
         titleLabel.text = title as? String
         overviewLabel.text = overview as? String
         overviewLabel.sizeToFit()
+        // In events of overflowing text still
+        overviewLabel.adjustsFontSizeToFitWidth = true
         scrollView.contentSize = CGSize(width: UIScreen.main.bounds.width, height: infoView.frame.maxY)
         
         if let posterPath = movie["poster_path"] as? String {
