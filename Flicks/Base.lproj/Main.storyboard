@@ -112,8 +112,8 @@
                                         <rect key="frame" x="0.0" y="0.0" width="375" height="607"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     </imageView>
-                                    <view alpha="0.80000000000000004" contentMode="scaleToFill" misplaced="YES" id="Wcm-vJ-G1G">
-                                        <rect key="frame" x="0.0" y="565" width="375" height="254"/>
+                                    <view alpha="0.94999999999999996" contentMode="scaleToFill" misplaced="YES" id="Wcm-vJ-G1G">
+                                        <rect key="frame" x="0.0" y="523" width="375" height="254"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="WFe-DH-hE6">
@@ -123,8 +123,8 @@
                                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="jh3-qy-fSH">
-                                                <frame key="frameInset" minX="8" minY="37" width="359" height="32"/>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="jh3-qy-fSH">
+                                                <frame key="frameInset" minX="8" minY="73" width="359" height="32"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>

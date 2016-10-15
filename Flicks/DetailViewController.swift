@@ -23,6 +23,7 @@ class DetailViewController: UIViewController {
         let title = movie["title"]
         let overview = movie["overview"]
         titleLabel.text = title as? String
+        titleLabel.adjustsFontSizeToFitWidth = true
         overviewLabel.text = overview as? String
         overviewLabel.sizeToFit()
         // In events of overflowing text still

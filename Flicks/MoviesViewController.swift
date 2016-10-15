@@ -149,7 +149,11 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         let cell = sender as! UITableViewCell
         let indexPath = tableView.indexPath(for: cell)
         let detailVC = segue.destination as! DetailViewController
-        detailVC.movie = movies?[(indexPath?.row)!]
+        var moviesToUse = movies
+        if isSearch {
+            moviesToUse = filteredMovies ?? movies
+        }
+        detailVC.movie = moviesToUse?[(indexPath?.row)!]
     }
     
     func loadMovies(_ refreshControl: UIRefreshControl? = nil) {
