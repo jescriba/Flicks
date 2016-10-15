@@ -91,12 +91,16 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         let task = session.dataTask(with: request) {
             (dataOrNil, response, errorOrNil) -> Void in
             if errorOrNil != nil {
-                self.networkErrorView.isHidden = false
+                DispatchQueue.main.async {
+                    self.networkErrorView.isHidden = false
+                }
             }
             if let data = dataOrNil {
                 if let response = try! JSONSerialization.jsonObject(with: data, options: []) as? NSDictionary {
                     self.movies = response["results"] as? [NSDictionary]
                     DispatchQueue.main.async {
+                        // If there was previously a network error and refresh worked
+                        self.networkErrorView.isHidden = true
                         self.tableView.reloadData()
                     }
                 }
