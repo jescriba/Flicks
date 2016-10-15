@@ -10,22 +10,28 @@ import UIKit
 import AFNetworking
 import CircularSpinner
 
-class MoviesViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, CircularSpinnerDelegate, UISearchBarDelegate {
-    
+class MoviesViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, CircularSpinnerDelegate, UISearchBarDelegate, UICollectionViewDelegate, UICollectionViewDataSource {
+
     @IBOutlet weak var listGridSegmentControl: UISegmentedControl!
     @IBOutlet weak var moviesNavigationItem: UINavigationItem!
     @IBOutlet weak var networkErrorView: UIView!
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet var collectionView: UICollectionView!
+
+    let screenWidth = UIScreen.main.bounds.width
+    let screenHeight = UIScreen.main.bounds.height
     let apiKey = "a07e22bc18f5cb106bfe4cc1f83ad8ed"
     var isSearch = false
     var searchBar: UISearchBar!
     var endPoint: String!
     var movies: [NSDictionary]?
     var filteredMovies: [NSDictionary]?
+    var navMaxY: CGFloat = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        navMaxY = navigationController!.navigationBar.frame.maxY
         tableView.dataSource = self
         tableView.delegate = self
         let searchBarButton = UIBarButtonItem(image: UIImage(named: "search"), style: .plain, target: self, action: #selector(setUpSearch))
@@ -41,12 +47,21 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         tableView.backgroundColor = UIColor(red:1.00, green:0.98, blue:1.00, alpha:1.0)
         tableView.addSubview(refreshControl)
         
+        setUpCollectionView()
         // Do any additional setup after loading the view.
+    }
+    
+    func setUpCollectionView() {
+        // Initial sizing of collection view
+        collectionView.frame = CGRect(origin: CGPoint(x: 0, y: navMaxY), size: tableView.frame.size)
+        collectionView.frame.size.height = collectionView.frame.size.height - navMaxY
+        (collectionView.collectionViewLayout as! UICollectionViewFlowLayout).itemSize = CGSize(width: screenWidth / 3.5, height: screenHeight / 3.5)
+        collectionView.delegate = self
+        collectionView.dataSource = self
     }
     
     func setUpSearch() {
         if !isSearch {
-            let navMaxY = navigationController!.navigationBar.frame.maxY
             let searchBarRect = CGRect(x: 0, y: navMaxY, width: UIScreen.main.bounds.width, height: 50)
             searchBar = UISearchBar(frame: searchBarRect)
             searchBar.layer.opacity = 0.92
@@ -70,7 +85,17 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
     }
     
     func changeViewMode() {
-        
+        if listGridSegmentControl.selectedSegmentIndex == 0 {
+            // List Mode
+            collectionView.isHidden = true
+            tableView.reloadData()
+            tableView.isHidden = false
+        } else {
+            // Grid Mode
+            tableView.isHidden = true
+            collectionView.reloadData()
+            collectionView.isHidden = false
+        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -135,6 +160,7 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
             }
         }
         tableView.reloadData()
+        collectionView.reloadData()
     }
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
@@ -146,14 +172,20 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        let cell = sender as! UITableViewCell
-        let indexPath = tableView.indexPath(for: cell)
+        let tableCell = sender as? UITableViewCell
+        let collectionCell = sender as? UICollectionViewCell
+        let index: Int!
+        if let cc = collectionCell {
+            index = collectionView.indexPath(for: cc)?.item
+        } else {
+            index = tableView.indexPath(for: tableCell!)?.row
+        }
         let detailVC = segue.destination as! DetailViewController
         var moviesToUse = movies
         if isSearch {
             moviesToUse = filteredMovies ?? movies
         }
-        detailVC.movie = moviesToUse?[(indexPath?.row)!]
+        detailVC.movie = moviesToUse?[index]
     }
     
     func loadMovies(_ refreshControl: UIRefreshControl? = nil) {
@@ -180,11 +212,46 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
             if let refresh = refreshControl {
                 refresh.endRefreshing()
             }
-            // Arbitrary sleep here to see animation
+            // Arbitrary sleep here for demonstrative purposes
             sleep(UInt32(1.5))
             CircularSpinner.hide()
         }
         task.resume()
+    }
+    
+    open func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "movieCollectionCell", for: indexPath) as! MovieCollectionCell
+        var moviesToUse = movies
+        if isSearch {
+            moviesToUse = filteredMovies ?? movies
+        }
+        let movie = moviesToUse![indexPath.item]
+        if let posterPath = movie["poster_path"] as? String {
+            let baseURL = "https://image.tmdb.org/t/p/w500"
+            let imageURL = URL(string: baseURL + posterPath)
+            let cellHeight = cell.frame.size.height
+            let cellWidth = cell.frame.size.width
+            cell.movieImageView.frame = CGRect.zero
+            cell.movieImageView.frame.size = CGSize(width: cellWidth - 8, height: cellHeight - 6)
+            cell.movieImageView.alpha = 0
+            cell.movieImageView.setImageWith(imageURL!)
+            UIView.animate(withDuration: 1, animations: {
+                cell.movieImageView.alpha = 1
+            })
+        }
+        return cell
+    }
+    
+    open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        var moviesToUse = movies
+        if isSearch {
+            moviesToUse = filteredMovies ?? movies
+        }
+        return moviesToUse?.count ?? 0
+    }
+    
+    open func numberOfSections(in collectionView: UICollectionView) -> Int {
+        return 1
     }
 
 }
