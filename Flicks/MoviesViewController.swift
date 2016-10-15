@@ -8,9 +8,9 @@
 
 import UIKit
 import AFNetworking
-import ALLoadingView
+import CircularSpinner
 
-class MoviesViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class MoviesViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, CircularSpinnerDelegate {
     
     @IBOutlet weak var networkErrorView: UIView!
     @IBOutlet weak var tableView: UITableView!
@@ -24,9 +24,8 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         tableView.dataSource = self
         tableView.delegate = self
         
-        ALLoadingView.manager.blurredBackground = true
-        ALLoadingView.manager.messageText = "Fetching movies..."
-        ALLoadingView.manager.showLoadingView(ofType: .messageWithIndicator, windowMode: .fullscreen)
+        CircularSpinner.setAnimationDelegate(self)
+        CircularSpinner.show("Fetching movies...", animated: true, type: .indeterminate)
         loadMovies()
         
         let refreshControl = UIRefreshControl()
@@ -102,11 +101,12 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
                     }
                 }
             }
-            ALLoadingView.manager.hideLoadingView(withDelay: 3)
             if let refresh = refreshControl {
                 refresh.endRefreshing()
             }
-
+            // Arbitrary sleep here to see animation
+            sleep(2)
+            CircularSpinner.hide()
         }
         task.resume()
     }
