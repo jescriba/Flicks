@@ -10,19 +10,25 @@ import UIKit
 import AFNetworking
 import CircularSpinner
 
-class MoviesViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, CircularSpinnerDelegate {
+class MoviesViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, CircularSpinnerDelegate, UISearchBarDelegate {
     
+    @IBOutlet weak var moviesNavigationItem: UINavigationItem!
     @IBOutlet weak var networkErrorView: UIView!
     @IBOutlet weak var tableView: UITableView!
     let apiKey = "a07e22bc18f5cb106bfe4cc1f83ad8ed"
+    var isSearch = false
+    var searchBar: UISearchBar!
     var endPoint: String!
     var movies: [NSDictionary]?
+    var filteredMovies: [NSDictionary]?
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
         tableView.dataSource = self
         tableView.delegate = self
+        let searchBarButton = UIBarButtonItem(image: UIImage(named: "search"), style: .plain, target: self, action: #selector(setUpSearch))
+        moviesNavigationItem.rightBarButtonItem = searchBarButton
         
         CircularSpinner.setAnimationDelegate(self)
         CircularSpinner.show("Fetching movies...", animated: true, type: .indeterminate)
@@ -31,8 +37,24 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         let refreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action: #selector(refreshControlAction(_:)), for: .valueChanged)
         tableView.addSubview(refreshControl)
-
+        
         // Do any additional setup after loading the view.
+    }
+    
+    func setUpSearch() {
+        if !isSearch {
+            let navMaxY = navigationController!.navigationBar.frame.maxY
+            let searchBarRect = CGRect(x: 0, y: navMaxY, width: UIScreen.main.bounds.width, height: 50)
+            searchBar = UISearchBar(frame: searchBarRect)
+            searchBar.delegate = self
+            isSearch = true
+            view.addSubview(searchBar)
+            tableView.frame.origin = CGPoint(x: 0, y: searchBar.frame.height)
+        } else {
+            isSearch = false
+            searchBar.removeFromSuperview()
+            tableView.frame.origin = CGPoint(x: 0, y: 0)
+        }
     }
     
     func refreshControlAction(_ refreshControl: UIRefreshControl) {
@@ -45,14 +67,20 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
     }
     
     open func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if isSearch {
+            return filteredMovies?.count ?? 0
+        }
         return movies?.count ?? 0
     }
     
     open func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "MovieCell", for: indexPath) as! MovieCell
         cell.accessoryType = .none
-        
-        let movie = movies![indexPath.row]
+        var moviesToUse = movies
+        if isSearch {
+            moviesToUse = filteredMovies
+        }
+        let movie = moviesToUse![indexPath.row]
         let title = movie["title"] as! String
         let overview = movie["overview"] as! String
         
@@ -75,6 +103,26 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        filteredMovies = movies?.filter { movie in
+            let searchTerm = searchBar.text
+            if searchTerm != nil && !searchTerm!.isEmpty {
+                return (movie["title"] as! String).contains(searchTerm!)
+            } else {
+                return true
+            }
+        }
+        tableView.reloadData()
+    }
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.resignFirstResponder()
+    }
+    
+    func searchBarShouldEndEditing(_ searchBar: UISearchBar) -> Bool {
+        return true
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

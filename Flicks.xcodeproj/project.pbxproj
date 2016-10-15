@@ -361,6 +361,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A005640F3551354EA09FF008 /* Pods-Flicks.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = GFSP92A3FB;
 				INFOPLIST_FILE = Flicks/Info.plist;
@@ -375,6 +376,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9EAAFCAD41B817B0B8E67A01 /* Pods-Flicks.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = GFSP92A3FB;
 				INFOPLIST_FILE = Flicks/Info.plist;
