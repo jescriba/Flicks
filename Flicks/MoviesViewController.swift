@@ -27,28 +27,7 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         ALLoadingView.manager.blurredBackground = true
         ALLoadingView.manager.messageText = "Fetching movies..."
         ALLoadingView.manager.showLoadingView(ofType: .messageWithIndicator, windowMode: .fullscreen)
-        
-        let nowPlayingUrl = URL(string: "https://api.themoviedb.org/3/movie/\(endPoint!)?api_key=\(apiKey)")
-        let request = URLRequest(url: nowPlayingUrl!)
-        let session = URLSession.shared
-        let task = session.dataTask(with: request) {
-            (dataOrNil, response, errorOrNil) -> Void in
-            if let error = errorOrNil {
-                self.networkErrorView.isHidden = false
-                ALLoadingView.manager.hideLoadingView(withDelay: 1.5)
-            }
-            if let data = dataOrNil {
-                if let response = try! JSONSerialization.jsonObject(with: data, options: []) as? NSDictionary {
-                    self.movies = response["results"] as? [NSDictionary]
-                    DispatchQueue.main.async {
-                        self.tableView.reloadData()
-                        ALLoadingView.manager.hideLoadingView(withDelay: 1.5)
-
-                    }
-                }
-            }
-        }
-        task.resume()
+        loadMovies()
         
         let refreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action: #selector(refreshControlAction(_:)), for: .valueChanged)
@@ -58,28 +37,7 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
     }
     
     func refreshControlAction(_ refreshControl: UIRefreshControl) {
-        let nowPlayingUrl = URL(string: "https://api.themoviedb.org/3/movie/\(endPoint!)?api_key=\(apiKey)")
-        let request = URLRequest(url: nowPlayingUrl!)
-        let session = URLSession.shared
-        let task = session.dataTask(with: request) {
-            (dataOrNil, response, errorOrNil) -> Void in
-            // In the event a refresh is fixing a network error
-            if let error = errorOrNil {
-                self.networkErrorView.isHidden = false
-            } else {
-                self.networkErrorView.isHidden = true
-            }
-            if let data = dataOrNil {
-                if let response = try! JSONSerialization.jsonObject(with: data, options: []) as? NSDictionary {
-                    self.movies = response["results"] as? [NSDictionary]
-                    DispatchQueue.main.async {
-                        self.tableView.reloadData()
-                        refreshControl.endRefreshing()
-                    }
-                }
-            }
-        }
-        task.resume()
+        loadMovies(refreshControl)
     }
 
     override func didReceiveMemoryWarning() {
@@ -125,6 +83,32 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         let indexPath = tableView.indexPath(for: cell)
         let detailVC = segue.destination as! DetailViewController
         detailVC.movie = movies?[(indexPath?.row)!]
+    }
+    
+    func loadMovies(_ refreshControl: UIRefreshControl? = nil) {
+        let endPointUrl = URL(string: "https://api.themoviedb.org/3/movie/\(endPoint!)?api_key=\(apiKey)")
+        let request = URLRequest(url: endPointUrl!)
+        let session = URLSession.shared
+        let task = session.dataTask(with: request) {
+            (dataOrNil, response, errorOrNil) -> Void in
+            if errorOrNil != nil {
+                self.networkErrorView.isHidden = false
+            }
+            if let data = dataOrNil {
+                if let response = try! JSONSerialization.jsonObject(with: data, options: []) as? NSDictionary {
+                    self.movies = response["results"] as? [NSDictionary]
+                    DispatchQueue.main.async {
+                        self.tableView.reloadData()
+                    }
+                }
+            }
+            ALLoadingView.manager.hideLoadingView(withDelay: 3)
+            if let refresh = refreshControl {
+                refresh.endRefreshing()
+            }
+
+        }
+        task.resume()
     }
 
 }
