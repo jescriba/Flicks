@@ -19,10 +19,10 @@ class DetailViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        let title = movie["title"]
+        view.backgroundColor = UIColor.black
+        
         let overview = movie["overview"]
-        titleLabel.text = title as? String
+        titleLabel.text = "⌃"
         titleLabel.adjustsFontSizeToFitWidth = true
         overviewLabel.text = overview as? String
         overviewLabel.sizeToFit()

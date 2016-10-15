@@ -112,7 +112,7 @@
                                         <rect key="frame" x="0.0" y="0.0" width="375" height="607"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     </imageView>
-                                    <view alpha="0.94999999999999996" contentMode="scaleToFill" misplaced="YES" id="Wcm-vJ-G1G">
+                                    <view alpha="0.80000000000000004" contentMode="scaleToFill" misplaced="YES" id="Wcm-vJ-G1G">
                                         <rect key="frame" x="0.0" y="523" width="375" height="254"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <subviews>
