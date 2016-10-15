@@ -38,6 +38,7 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         
         let refreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action: #selector(refreshControlAction(_:)), for: .valueChanged)
+        tableView.backgroundColor = UIColor(red:1.00, green:0.98, blue:1.00, alpha:1.0)
         tableView.addSubview(refreshControl)
         
         // Do any additional setup after loading the view.
@@ -87,6 +88,10 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
     open func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "MovieCell", for: indexPath) as! MovieCell
         cell.accessoryType = .none
+        cell.contentView.backgroundColor = UIColor(red:1.00, green:0.98, blue:1.00, alpha:1.0)
+        let bgView = UIView()
+        bgView.backgroundColor = UIColor(red:1.00, green:0.93, blue:1.00, alpha:1.0)
+        cell.selectedBackgroundView = bgView
         var moviesToUse = movies
         if isSearch {
             moviesToUse = filteredMovies ?? movies
@@ -97,6 +102,10 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         
         cell.titleLabel.text = title
         cell.overviewLabel.text = overview
+        cell.titleLabel.font = UIFont(name: "HelveticaNeue-Bold", size: 20)
+        cell.overviewLabel.font = UIFont(name: "HelveticaNeue", size: 15)
+        cell.titleLabel.textColor = UIColor(red:0.31, green:0.00, blue:0.32, alpha:1.0)
+        cell.overviewLabel.textColor = UIColor(red:0.31, green:0.00, blue:0.25, alpha:1.0)
         cell.titleLabel.adjustsFontSizeToFitWidth = true
         cell.overviewLabel.adjustsFontSizeToFitWidth = true
         if let posterPath = movie["poster_path"] as? String {
@@ -168,7 +177,7 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
                 refresh.endRefreshing()
             }
             // Arbitrary sleep here to see animation
-            sleep(2)
+            sleep(UInt32(1.5))
             CircularSpinner.hide()
         }
         task.resume()
