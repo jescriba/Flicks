@@ -89,7 +89,7 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         cell.accessoryType = .none
         var moviesToUse = movies
         if isSearch {
-            moviesToUse = filteredMovies
+            moviesToUse = filteredMovies ?? movies
         }
         let movie = moviesToUse![indexPath.row]
         let title = movie["title"] as! String
