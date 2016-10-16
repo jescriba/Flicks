@@ -141,6 +141,9 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
             UIView.animate(withDuration: 1, animations: {
                 cell.posterView.alpha = 1
             })
+        } else {
+            // Ideally you'd have a stock photo
+            cell.posterView.alpha = 0
         }
         
         return cell

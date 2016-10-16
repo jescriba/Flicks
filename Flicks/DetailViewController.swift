@@ -55,6 +55,9 @@ class DetailViewController: UIViewController {
             UIView.animate(withDuration: 1, animations: {
                 self.posterView.alpha = 1
             })
+        } else {
+            // Ideally a stock photo replacement
+            posterView.alpha = 0
         }
         
         // Do any additional setup after loading the view.
