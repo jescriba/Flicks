@@ -42,6 +42,10 @@ GIF created with [LiceCap](http://www.cockos.com/licecap/).
 ## Notes
 
 Describe any challenges encountered while building the app.
+- Some challenges with figuring out how to style certain aspects of navigation.
+- Some challenges for accounting navigation bar height in setting up frames
+- Collection views images werent loading because of how I was setting their frame initially (too large and missing inset math)
+
 
 ## License
 
