@@ -147,20 +147,34 @@
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     </imageView>
                                     <view alpha="0.80000000000000004" contentMode="scaleToFill" misplaced="YES" id="Wcm-vJ-G1G">
-                                        <rect key="frame" x="0.0" y="523" width="375" height="254"/>
+                                        <rect key="frame" x="0.0" y="525" width="375" height="254"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <subviews>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="WFe-DH-hE6">
-                                                <frame key="frameInset" minX="8" minY="8" width="349" height="21"/>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="⌃" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="WFe-DH-hE6">
+                                                <frame key="frameInset" minX="8" minY="8" width="349" height="23"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                <fontDescription key="fontDescription" type="boldSystem" pointSize="19"/>
+                                                <fontDescription key="fontDescription" type="boldSystem" pointSize="29"/>
                                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="jh3-qy-fSH">
-                                                <frame key="frameInset" minX="8" minY="73" width="359" height="32"/>
+                                                <frame key="frameInset" minX="8" minY="104" width="359" height="22"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Rating Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="rtZ-42-PWI">
+                                                <frame key="frameInset" minX="290" minY="75" width="77" height="21"/>
+                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                                <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="release date" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="jBT-9c-mZc">
+                                                <frame key="frameInset" minX="8" minY="75" width="225" height="24"/>
+                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
@@ -177,13 +191,14 @@
                         <outlet property="infoView" destination="Wcm-vJ-G1G" id="Ybt-JU-yZk"/>
                         <outlet property="overviewLabel" destination="jh3-qy-fSH" id="gRi-KY-vjF"/>
                         <outlet property="posterView" destination="YhJ-df-m2z" id="KHB-Wo-ZxP"/>
+                        <outlet property="ratingLabel" destination="rtZ-42-PWI" id="MaG-EV-lZc"/>
+                        <outlet property="releaseDateLabel" destination="jBT-9c-mZc" id="1u4-7e-w9p"/>
                         <outlet property="scrollView" destination="C8p-Bw-uLM" id="KEB-Wt-xWg"/>
-                        <outlet property="titleLabel" destination="WFe-DH-hE6" id="Fpv-AS-YmZ"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="2nM-5c-Q8L" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1817" y="64"/>
+            <point key="canvasLocation" x="1816.5" y="63.5"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="dI5-PO-VVA">
