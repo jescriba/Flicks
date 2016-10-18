@@ -10,7 +10,7 @@ import UIKit
 import AFNetworking
 import CircularSpinner
 
-class MoviesViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, CircularSpinnerDelegate, UISearchBarDelegate, UICollectionViewDelegate, UICollectionViewDataSource {
+class MoviesViewController: UIViewController {
 
     @IBOutlet weak var listGridSegmentControl: UISegmentedControl!
     @IBOutlet weak var moviesNavigationItem: UINavigationItem!
@@ -18,15 +18,15 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet var collectionView: UICollectionView!
 
-    let screenWidth = UIScreen.main.bounds.width
-    let screenHeight = UIScreen.main.bounds.height
-    let apiKey = "a07e22bc18f5cb106bfe4cc1f83ad8ed"
-    var isSearch = false
-    var searchBar: UISearchBar!
-    var endPoint: String!
-    var movies: [NSDictionary]?
-    var filteredMovies: [NSDictionary]?
-    var navMaxY: CGFloat = 0
+    private let screenWidth: CGFloat = UIScreen.main.bounds.width
+    private let screenHeight: CGFloat = UIScreen.main.bounds.height
+    private let apiKey: String = "a07e22bc18f5cb106bfe4cc1f83ad8ed"
+    private var searchBar: UISearchBar!
+    private var navMaxY: CGFloat = 0
+    internal var isSearch: Bool = false
+    internal var movies: [NSDictionary]?
+    internal var filteredMovies: [NSDictionary]?
+    internal var endPoint: String!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -51,7 +51,7 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         // Do any additional setup after loading the view.
     }
     
-    func setUpCollectionView() {
+    private func setUpCollectionView() {
         // Initial sizing of collection view
         collectionView.frame = CGRect(origin: CGPoint(x: 0, y: navMaxY), size: tableView.frame.size)
         collectionView.frame.size.height = collectionView.frame.size.height - navMaxY
@@ -60,7 +60,7 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         collectionView.dataSource = self
     }
     
-    func setUpSearch() {
+    @objc private func setUpSearch() {
         if !isSearch {
             let searchBarRect = CGRect(x: 0, y: navMaxY, width: UIScreen.main.bounds.width, height: 50)
             searchBar = UISearchBar(frame: searchBarRect)
@@ -80,11 +80,11 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         }
     }
     
-    func refreshControlAction(_ refreshControl: UIRefreshControl) {
-        loadMovies(refreshControl)
+    @objc private func refreshControlAction(_ refreshControl: UIRefreshControl) {
+        loadMovies(refreshControl: refreshControl)
     }
     
-    func changeViewMode() {
+    @objc private func changeViewMode() {
         if listGridSegmentControl.selectedSegmentIndex == 0 {
             // List Mode
             collectionView.isHidden = true
@@ -97,12 +97,58 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
             collectionView.isHidden = false
         }
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let tableCell = sender as? UITableViewCell
+        let collectionCell = sender as? UICollectionViewCell
+        let index: Int!
+        if let cc = collectionCell {
+            index = collectionView.indexPath(for: cc)?.item
+        } else {
+            index = tableView.indexPath(for: tableCell!)?.row
+        }
+        let detailVC = segue.destination as! DetailViewController
+        var moviesToUse = movies
+        if isSearch {
+            moviesToUse = filteredMovies ?? movies
+        }
+        detailVC.movie = moviesToUse?[index]
     }
     
+    func loadMovies(refreshControl: UIRefreshControl? = nil) {
+        let endPointUrl = URL(string: "https://api.themoviedb.org/3/movie/\(endPoint!)?api_key=\(apiKey)")
+        let request = URLRequest(url: endPointUrl!)
+        let session = URLSession.shared
+        let task = session.dataTask(with: request) {
+            (dataOrNil, response, errorOrNil) -> Void in
+            if errorOrNil != nil {
+                DispatchQueue.main.async {
+                    self.networkErrorView.isHidden = false
+                }
+            }
+            if let data = dataOrNil {
+                if let response = try! JSONSerialization.jsonObject(with: data, options: []) as? NSDictionary {
+                    self.movies = response["results"] as? [NSDictionary]
+                    DispatchQueue.main.async {
+                        // If there was previously a network error and refresh worked
+                        self.networkErrorView.isHidden = true
+                        self.tableView.reloadData()
+                    }
+                }
+            }
+            if let refresh = refreshControl {
+                refresh.endRefreshing()
+            }
+            // Arbitrary sleep here for demonstrative purposes
+            sleep(UInt32(1.5))
+            CircularSpinner.hide()
+        }
+        task.resume()
+    }
+}
+
+// MARK: - UITableViewDataSource
+extension MoviesViewController: UITableViewDataSource {
     open func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if isSearch {
             return filteredMovies?.count ?? 0
@@ -148,78 +194,27 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         
         return cell
     }
-    
+}
+
+// MARK: - UITableViewDelegate
+extension MoviesViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
     }
-    
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        filteredMovies = movies?.filter { movie in
-            let searchTerm = searchBar.text
-            if searchTerm != nil && !searchTerm!.isEmpty {
-                return (movie["title"] as! String).contains(searchTerm!)
-            } else {
-                return true
-            }
-        }
-        tableView.reloadData()
-        collectionView.reloadData()
+}
+
+// MARK: - UICollectionViewDataSource
+extension MoviesViewController: UICollectionViewDataSource {
+    open func numberOfSections(in collectionView: UICollectionView) -> Int {
+        return 1
     }
     
-    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        searchBar.resignFirstResponder()
-    }
-    
-    func searchBarShouldEndEditing(_ searchBar: UISearchBar) -> Bool {
-        return true
-    }
-    
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        let tableCell = sender as? UITableViewCell
-        let collectionCell = sender as? UICollectionViewCell
-        let index: Int!
-        if let cc = collectionCell {
-            index = collectionView.indexPath(for: cc)?.item
-        } else {
-            index = tableView.indexPath(for: tableCell!)?.row
-        }
-        let detailVC = segue.destination as! DetailViewController
+    open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         var moviesToUse = movies
         if isSearch {
             moviesToUse = filteredMovies ?? movies
         }
-        detailVC.movie = moviesToUse?[index]
-    }
-    
-    func loadMovies(_ refreshControl: UIRefreshControl? = nil) {
-        let endPointUrl = URL(string: "https://api.themoviedb.org/3/movie/\(endPoint!)?api_key=\(apiKey)")
-        let request = URLRequest(url: endPointUrl!)
-        let session = URLSession.shared
-        let task = session.dataTask(with: request) {
-            (dataOrNil, response, errorOrNil) -> Void in
-            if errorOrNil != nil {
-                DispatchQueue.main.async {
-                    self.networkErrorView.isHidden = false
-                }
-            }
-            if let data = dataOrNil {
-                if let response = try! JSONSerialization.jsonObject(with: data, options: []) as? NSDictionary {
-                    self.movies = response["results"] as? [NSDictionary]
-                    DispatchQueue.main.async {
-                        // If there was previously a network error and refresh worked
-                        self.networkErrorView.isHidden = true
-                        self.tableView.reloadData()
-                    }
-                }
-            }
-            if let refresh = refreshControl {
-                refresh.endRefreshing()
-            }
-            // Arbitrary sleep here for demonstrative purposes
-            sleep(UInt32(1.5))
-            CircularSpinner.hide()
-        }
-        task.resume()
+        return moviesToUse?.count ?? 0
     }
     
     open func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -244,17 +239,38 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         }
         return cell
     }
-    
-    open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        var moviesToUse = movies
-        if isSearch {
-            moviesToUse = filteredMovies ?? movies
-        }
-        return moviesToUse?.count ?? 0
-    }
-    
-    open func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 1
-    }
+}
 
+// MARK: - UICollectionViewDelegate
+extension MoviesViewController: UICollectionViewDelegate {
+    
+}
+
+// MARK: - UISearchBarDelegate
+extension MoviesViewController: UISearchBarDelegate {
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        filteredMovies = movies?.filter { movie in
+            let searchTerm = searchBar.text
+            if searchTerm != nil && !searchTerm!.isEmpty {
+                return (movie["title"] as! String).contains(searchTerm!)
+            } else {
+                return true
+            }
+        }
+        tableView.reloadData()
+        collectionView.reloadData()
+    }
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.resignFirstResponder()
+    }
+    
+    func searchBarShouldEndEditing(_ searchBar: UISearchBar) -> Bool {
+        return true
+    }
+}
+
+// MARK: - CircularSpinnerDelegate
+extension MoviesViewController: CircularSpinnerDelegate {
+    
 }
