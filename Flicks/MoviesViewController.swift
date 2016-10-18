@@ -168,29 +168,7 @@ extension MoviesViewController: UITableViewDataSource {
             moviesToUse = filteredMovies ?? movies
         }
         let movie = moviesToUse![indexPath.row]
-        let title = movie["title"] as! String
-        let overview = movie["overview"] as! String
-        
-        cell.titleLabel.text = title
-        cell.overviewLabel.text = overview
-        cell.titleLabel.font = UIFont(name: "HelveticaNeue-Bold", size: 20)
-        cell.overviewLabel.font = UIFont(name: "HelveticaNeue", size: 15)
-        cell.titleLabel.textColor = UIColor(red:0.31, green:0.00, blue:0.32, alpha:1.0)
-        cell.overviewLabel.textColor = UIColor(red:0.31, green:0.00, blue:0.25, alpha:1.0)
-        cell.titleLabel.adjustsFontSizeToFitWidth = true
-        cell.overviewLabel.adjustsFontSizeToFitWidth = true
-        if let posterPath = movie["poster_path"] as? String {
-            let baseURL = "https://image.tmdb.org/t/p/w500"
-            let imageURL = URL(string: baseURL + posterPath)
-            cell.posterView.alpha = 0
-            cell.posterView.setImageWith(imageURL!)
-            UIView.animate(withDuration: 1, animations: {
-                cell.posterView.alpha = 1
-            })
-        } else {
-            // Ideally you'd have a stock photo
-            cell.posterView.alpha = 0
-        }
+        cell.movie = movie
         
         return cell
     }
@@ -223,20 +201,7 @@ extension MoviesViewController: UICollectionViewDataSource {
         if isSearch {
             moviesToUse = filteredMovies ?? movies
         }
-        let movie = moviesToUse![indexPath.item]
-        if let posterPath = movie["poster_path"] as? String {
-            let baseURL = "https://image.tmdb.org/t/p/w500"
-            let imageURL = URL(string: baseURL + posterPath)
-            let cellHeight = cell.frame.size.height
-            let cellWidth = cell.frame.size.width
-            cell.movieImageView.frame = CGRect.zero
-            cell.movieImageView.frame.size = CGSize(width: cellWidth - 8, height: cellHeight - 6)
-            cell.movieImageView.alpha = 0
-            cell.movieImageView.setImageWith(imageURL!)
-            UIView.animate(withDuration: 1, animations: {
-                cell.movieImageView.alpha = 1
-            })
-        }
+        cell.movie = moviesToUse![indexPath.item]
         return cell
     }
 }
